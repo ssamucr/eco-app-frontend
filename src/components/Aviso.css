@@ -1,0 +1,29 @@
+.aviso {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--tile-income);
+  color: var(--positive);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.aviso__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.aviso__close:hover {
+  background: rgba(0, 0, 0, 0.06);
+}

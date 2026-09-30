@@ -1,0 +1,137 @@
+.group-title {
+  margin-bottom: 8px;
+  padding: 0 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.obligs {
+  padding: 6px 10px;
+}
+
+.orow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.orow + .orow {
+  border-top: 1px solid var(--divider);
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.orow:hover {
+  background-color: var(--hover-row);
+}
+
+.orow--done {
+  opacity: 0.7;
+}
+
+.orow__who {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.orow__who .person-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.orow__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--tile-neutral);
+  color: var(--text-nav);
+  flex-shrink: 0;
+}
+
+.orow__main {
+  min-width: 0;
+}
+
+.orow__title {
+  font-size: 14px;
+  font-weight: 500;
+  overflow-wrap: break-word;
+}
+
+.orow__meta {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--text-faint);
+  overflow-wrap: break-word;
+}
+
+.orow__amount {
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.orow__actions {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.liq {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  padding: 10px 14px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-sm);
+}
+
+.liq__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.liq__text {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.liq__detail {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--text-faint);
+  overflow-wrap: break-word;
+}
+
+@media (max-width: 600px) {
+  .orow {
+    gap: 8px;
+  }
+
+  .orow__who {
+    flex-basis: 100%;
+  }
+
+  .orow {
+    flex-wrap: wrap;
+  }
+
+  .orow__amount {
+    margin-left: 46px;
+    margin-right: auto;
+  }
+}

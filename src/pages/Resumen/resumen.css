@@ -1,0 +1,268 @@
+/* ---------- KPIs ---------- */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.kpi__label {
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.kpi__value {
+  font-size: 23px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+.kpi__trend {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.kpi__trend--neutral,
+.kpi__note {
+  color: var(--text-faint);
+  font-weight: 400;
+}
+
+.kpi__note {
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+/* ---------- cuerpo ---------- */
+.resumen-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-width: 0;
+}
+
+.accounts {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ---------- actividad ---------- */
+.activity {
+  padding: 8px 22px 14px;
+}
+
+.activity .section-head {
+  padding: 14px 0 6px;
+}
+
+.actrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 4px;
+  border-radius: var(--radius-sm);
+}
+
+.actrow:hover {
+  background-color: var(--hover-row);
+}
+
+.actrow__icon {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  background: var(--tile-neutral);
+  color: var(--text-nav);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.actrow__icon--expense {
+  background: var(--tile-expense);
+  color: var(--negative);
+}
+
+.actrow__icon--income {
+  background: var(--tile-income);
+  color: var(--positive);
+}
+
+.actrow__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.actrow__title {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.actrow__meta {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+.actrow__amount {
+  font-size: 14px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* ---------- gastos por categoría ---------- */
+.spend__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.spend__month {
+  margin-top: 3px;
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+.spend__total {
+  font-size: 17px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.spend__list {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  margin-top: 16px;
+}
+
+.spend__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.spend__name {
+  flex: 1;
+  font-size: 14px;
+}
+
+.spend__amount {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.spend__pct {
+  width: 32px;
+  text-align: right;
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+/* ---------- obligaciones ---------- */
+.debts__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.debts__balance {
+  font-size: 15px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.debts__list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.debt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.debt__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.debt__name {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.debt__concept {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+.debt__side {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.debt__amount {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.debt__dir {
+  margin-top: 1px;
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
+.debts__more {
+  display: block;
+  margin-top: 16px;
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 1180px) {
+  .kpi-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .resumen-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .kpi-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

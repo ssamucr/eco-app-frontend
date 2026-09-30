@@ -1,0 +1,38 @@
+.categories {
+  padding: 6px 16px;
+}
+
+.category {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 4px;
+}
+
+.category + .category {
+  border-top: 1px solid var(--divider);
+}
+
+.category__dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.category__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.category__name {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.category__meta {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--text-faint);
+  overflow-wrap: break-word;
+}

@@ -1,0 +1,234 @@
+.form-page {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.backlink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.backlink:hover {
+  opacity: 0.7;
+}
+
+.form-title {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+.form-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 28px 30px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.field__label {
+  display: block;
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-nav);
+}
+
+.field__optional {
+  font-weight: 400;
+  color: var(--text-faint);
+}
+
+.field__help {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+.field__error {
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--negative);
+}
+
+.input {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+}
+
+.input::placeholder {
+  color: #b3b3b8;
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.input[aria-invalid='true'] {
+  border-color: var(--negative);
+}
+
+.input--select {
+  padding-right: 34px;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%236E6E73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  cursor: pointer;
+}
+
+.input:disabled {
+  background-color: #efeee9;
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.input-money {
+  position: relative;
+}
+
+.input-money__symbol {
+  position: absolute;
+  left: 12px;
+  top: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: var(--text-faint);
+}
+
+.input-money__symbol--right {
+  left: auto;
+  right: 12px;
+}
+
+.input--percent {
+  padding-right: 28px;
+}
+
+.input--money {
+  padding-left: 26px;
+}
+
+.readonly-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-sm);
+  background: #efeee9;
+  font-size: 14px;
+  color: var(--text-nav);
+}
+
+.info-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: #efeee9;
+}
+
+.info-box__label {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.info-box__value {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.segmented {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--radius-sm);
+  background: var(--tile-neutral);
+}
+
+.segmented__option {
+  height: 34px;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text-nav);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.segmented__option.is-active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.segmented__option:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.form-divider {
+  height: 1px;
+  margin: 4px 0;
+  background: var(--divider);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-actions--split {
+  justify-content: space-between;
+}
+
+.form-actions__main {
+  display: flex;
+  gap: 10px;
+}
+
+@media (max-width: 600px) {
+  .form-card {
+    padding: 22px 18px;
+  }
+
+  .form-actions--split {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .form-actions__main {
+    justify-content: flex-end;
+  }
+}

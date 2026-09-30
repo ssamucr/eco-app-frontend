@@ -1,0 +1,38 @@
+.confirm {
+  width: min(420px, calc(100vw - 32px));
+  padding: 24px 26px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+}
+
+.confirm::backdrop {
+  background: rgba(0, 0, 0, 0.38);
+}
+
+.confirm[open] {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.confirm__title {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+.confirm__text {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.confirm__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}

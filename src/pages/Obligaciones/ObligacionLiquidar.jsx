@@ -1,0 +1,181 @@
+import { useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { crearLiquidacion, getObligacionDetalle, getOpcionesObligacion } from '../../api/obligaciones'
+import ErrorCarga from '../../components/ErrorCarga'
+import {
+  AccionesFormulario,
+  Campo,
+  EncabezadoFormulario,
+  ErrorFormulario,
+  InputFecha,
+  InputMonto,
+  InputTexto,
+  PaginaFormulario,
+  Selector,
+  TarjetaFormulario,
+  VolverA,
+} from '../../components/forms'
+import { useRecurso } from '../../hooks/useRecurso'
+import { dinero, dineroConSigno, fechaCorta, hoyIso, montoParaInput, parseMonto } from '../../lib/format'
+import { etiquetaTransaccion } from '../../lib/movimientos'
+import { etiquetaObligacion } from '../../lib/obligaciones'
+import { flujoSubcuenta } from '../Movimientos/SubmovimientosVinculados'
+import './obligaciones.css'
+
+function Formulario({ obligacion: o, opciones }) {
+  const navigate = useNavigate()
+  const [fecha, setFecha] = useState(hoyIso())
+  const [monto, setMonto] = useState(montoParaInput(o.monto_pendiente))
+  const [transaccion, setTransaccion] = useState('')
+  const [movimiento, setMovimiento] = useState('')
+  const [descripcion, setDescripcion] = useState('')
+  const [errores, setErrores] = useState({})
+  const [errorGeneral, setErrorGeneral] = useState(null)
+  const [guardando, setGuardando] = useState(false)
+
+  const alCambiar = (campo, poner) => (valor) => {
+    poner(valor)
+    setErrores((previos) => ({ ...previos, [campo]: undefined }))
+  }
+
+  const enviar = async (evento) => {
+    evento.preventDefault()
+    const nuevos = {}
+    const importe = parseMonto(monto)
+    if (!fecha) nuevos.fecha = 'Elige una fecha.'
+    if (importe == null || Number.isNaN(importe) || importe <= 0) nuevos.monto = 'Ingresa un monto mayor que 0.'
+    else if (importe > o.monto_pendiente + 0.001) nuevos.monto = `Solo quedan ${dinero(o.monto_pendiente)} pendientes.`
+    setErrores(nuevos)
+    setErrorGeneral(null)
+    if (Object.keys(nuevos).length) return
+    setGuardando(true)
+    try {
+      await crearLiquidacion({
+        id_obligacion: o.id_obligacion,
+        fecha,
+        monto: importe,
+        id_transaccion: transaccion ? Number(transaccion) : null,
+        id_movimiento_subcuenta: movimiento ? Number(movimiento) : null,
+        descripcion: descripcion.trim() || null,
+      })
+      navigate('/obligaciones', {
+        state: { aviso: importe >= o.monto_pendiente - 0.001 ? 'Obligación liquidada.' : 'Liquidación parcial registrada.' },
+      })
+    } catch (falla) {
+      setErrorGeneral(falla.message)
+      setGuardando(false)
+    }
+  }
+
+  return (
+    <TarjetaFormulario onSubmit={enviar}>
+      <div className="form-grid">
+        <Campo id="fecha" etiqueta="Fecha" error={errores.fecha}>
+          <InputFecha id="fecha" valor={fecha} onChange={alCambiar('fecha', setFecha)} error={errores.fecha} />
+        </Campo>
+        <Campo id="monto" etiqueta="Monto" error={errores.monto} ayuda={`Pendiente: ${dinero(o.monto_pendiente)}`}>
+          <InputMonto id="monto" valor={monto} onChange={alCambiar('monto', setMonto)} error={errores.monto} autoFocus />
+        </Campo>
+      </div>
+
+      <Campo id="transaccion" etiqueta="Transacción relacionada" opcional ayuda="La transacción con la que se saldó esta obligación.">
+        <Selector
+          id="transaccion"
+          valor={transaccion}
+          onChange={setTransaccion}
+          vacio="Ninguna"
+          opciones={opciones.transacciones_recientes.map((t) => ({
+            valor: String(t.id_transaccion),
+            etiqueta: `${t.descripcion || etiquetaTransaccion(t.tipo)} · ${fechaCorta(t.fecha)}`,
+          }))}
+        />
+      </Campo>
+
+      <Campo
+        id="movimiento"
+        etiqueta="Movimiento de subcuenta relacionado"
+        opcional
+        ayuda="El movimiento entre subcuentas con el que se saldó esta obligación, si aplica."
+      >
+        <Selector
+          id="movimiento"
+          valor={movimiento}
+          onChange={setMovimiento}
+          vacio="Ninguno"
+          opciones={opciones.movimientos_subcuenta_recientes.map((m) => ({
+            valor: String(m.id_movimiento_subcuenta),
+            etiqueta: `${flujoSubcuenta(m.tipo, m.subcuenta_origen, m.subcuenta_destino)} · ${fechaCorta(m.fecha)}`,
+          }))}
+        />
+      </Campo>
+
+      <Campo id="descripcion" etiqueta="Descripción" opcional>
+        <InputTexto
+          id="descripcion"
+          valor={descripcion}
+          onChange={setDescripcion}
+          placeholder="Ej. Carlos me devolvió el préstamo"
+          maxLength={100}
+        />
+      </Campo>
+
+      <ErrorFormulario mensaje={errorGeneral} />
+
+      <AccionesFormulario>
+        <Link to="/obligaciones" className="btn">
+          Cancelar
+        </Link>
+        <button type="submit" className="btn btn--primary" disabled={guardando}>
+          {guardando ? 'Guardando…' : 'Confirmar liquidación'}
+        </button>
+      </AccionesFormulario>
+    </TarjetaFormulario>
+  )
+}
+
+export default function ObligacionLiquidar() {
+  const { idObligacion } = useParams()
+  const opciones = useRecurso(getOpcionesObligacion)
+  const obligacion = useRecurso((o) => getObligacionDetalle(idObligacion, o), [idObligacion])
+  const listo = opciones.data && obligacion.data
+  const falla = opciones.error ?? obligacion.error
+  const o = obligacion.data
+
+  return (
+    <PaginaFormulario>
+      <VolverA to="/obligaciones">Obligaciones</VolverA>
+      <EncabezadoFormulario
+        titulo="Liquidar obligación"
+        subtitulo={
+          o ? (
+            <>
+              {[o.concepto, o.persona, etiquetaObligacion(o.tipo)].filter(Boolean).join(' · ')} ·{' '}
+              <span className={`strong ${o.tipo === 'POR_COBRAR' ? 'positive' : o.tipo === 'POR_PAGAR' ? 'negative' : ''}`}>
+                {o.tipo === 'REPOSICION' ? dinero(o.monto_pendiente) : dineroConSigno(o.tipo === 'POR_PAGAR' ? -o.monto_pendiente : o.monto_pendiente)}
+              </span>
+            </>
+          ) : (
+            ' '
+          )
+        }
+      />
+      {!listo && !falla && <div className="skeleton" style={{ height: 420 }} />}
+      {falla && (
+        <ErrorCarga
+          titulo="No se pudo cargar la obligación"
+          error={falla}
+          onReintentar={() => {
+            opciones.recargar()
+            obligacion.recargar()
+          }}
+        />
+      )}
+      {listo && o.resuelta && (
+        <p className="form-error" role="alert">
+          Esta obligación ya está liquidada por completo.
+        </p>
+      )}
+      {listo && !o.resuelta && <Formulario obligacion={o} opciones={opciones.data} />}
+    </PaginaFormulario>
+  )
+}
