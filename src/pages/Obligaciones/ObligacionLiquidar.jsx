@@ -17,7 +17,7 @@ import {
 } from '../../components/forms'
 import { useRecurso } from '../../hooks/useRecurso'
 import { dinero, dineroConSigno, fechaCorta, hoyIso, montoParaInput, parseMonto } from '../../lib/format'
-import { etiquetaTransaccion } from '../../lib/movimientos'
+import { opcionTransaccion } from '../../lib/movimientos'
 import { etiquetaObligacion } from '../../lib/obligaciones'
 import { flujoSubcuenta } from '../Movimientos/SubmovimientosVinculados'
 import './obligaciones.css'
@@ -84,10 +84,7 @@ function Formulario({ obligacion: o, opciones }) {
           valor={transaccion}
           onChange={setTransaccion}
           vacio="Ninguna"
-          opciones={opciones.transacciones_recientes.map((t) => ({
-            valor: String(t.id_transaccion),
-            etiqueta: `${t.descripcion || etiquetaTransaccion(t.tipo)} · ${fechaCorta(t.fecha)}`,
-          }))}
+          opciones={opciones.transacciones_recientes.map(opcionTransaccion)}
         />
       </Campo>
 

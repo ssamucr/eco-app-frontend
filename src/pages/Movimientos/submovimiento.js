@@ -1,5 +1,30 @@
 import { dinero, parseMonto } from '../../lib/format'
-import { cuentasConSubcuentas, subcuentaTieneDestino, subcuentaTieneOrigen } from '../../lib/movimientos'
+import {
+  cuentasConSubcuentas,
+  subcuentaTieneDestino,
+  subcuentaTieneOrigen,
+  transaccionTieneDestino,
+  transaccionTieneOrigen,
+} from '../../lib/movimientos'
+
+// Cuánto cambia el saldo "sin asignar" de cada cuenta (id -> delta) por una transacción con estos datos.
+// Una transferencia resta de la cuenta origen y suma a la cuenta destino; un gasto solo resta, un ingreso solo suma.
+export function efectoSinAsignar(tipo, idOrigen, idDestino, monto) {
+  const efecto = {}
+  if (!monto) return efecto
+  if (transaccionTieneOrigen(tipo) && idOrigen) efecto[idOrigen] = (efecto[idOrigen] ?? 0) - monto
+  if (transaccionTieneDestino(tipo) && idDestino) efecto[idDestino] = (efecto[idDestino] ?? 0) + monto
+  return efecto
+}
+
+// efecto nuevo menos el que ya estaba reflejado en los datos cargados (al editar una transacción existente).
+export function ajustesSinAsignar(efectoActual, efectoOriginal) {
+  const ajustes = { ...efectoActual }
+  for (const id of Object.keys(efectoOriginal)) {
+    ajustes[id] = (ajustes[id] ?? 0) - efectoOriginal[id]
+  }
+  return ajustes
+}
 
 export const buscarCuenta = (opciones, id) => opciones.cuentas.find((c) => String(c.id_cuenta) === String(id))
 const buscarSubcuenta = (cuenta, id) => cuenta?.subcuentas.find((s) => String(s.id_subcuenta) === String(id))
@@ -17,14 +42,15 @@ export function submovimientoInicial(opciones) {
   }
 }
 
-// Lo que hay disponible en el origen del movimiento: el saldo sin asignar o el de la subcuenta de origen.
-export function disponibleDeOrigen(valor, cuenta) {
+// Lo que hay disponible en el origen del movimiento: el saldo sin asignar (ya con el ajuste de la
+// transacción que se esta guardando junto con el) o el de la subcuenta de origen.
+export function disponibleDeOrigen(valor, cuenta, ajuste = 0) {
   if (!cuenta) return null
-  if (!subcuentaTieneOrigen(valor.tipo)) return cuenta.sin_asignar
+  if (!subcuentaTieneOrigen(valor.tipo)) return cuenta.sin_asignar + ajuste
   return buscarSubcuenta(cuenta, valor.origen)?.saldo ?? null
 }
 
-export function validarSubmovimiento(valor, opciones) {
+export function validarSubmovimiento(valor, opciones, ajuste = 0) {
   const errores = {}
   const cuenta = buscarCuenta(opciones, valor.cuenta)
   if (!cuenta) errores.cuenta = 'Elige una cuenta.'
@@ -37,7 +63,7 @@ export function validarSubmovimiento(valor, opciones) {
   if (monto == null || Number.isNaN(monto) || monto <= 0) {
     errores.monto = 'Ingresa un monto mayor que 0.'
   } else {
-    const disponible = disponibleDeOrigen(valor, cuenta)
+    const disponible = disponibleDeOrigen(valor, cuenta, ajuste)
     if (disponible != null && monto > disponible + 0.001) {
       errores.monto = `Solo hay ${dinero(Math.max(disponible, 0))} disponibles.`
     }

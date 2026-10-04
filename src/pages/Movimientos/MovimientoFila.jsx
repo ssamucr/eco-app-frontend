@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import Icon from '../../components/Icon'
 import { dinero, plural } from '../../lib/format'
-import { estiloPorTipo, etiquetaSubcuenta, etiquetaTransaccion } from '../../lib/movimientos'
+import { estiloPorTipo, estiloPorTipoSubcuenta, etiquetaSubcuenta, etiquetaTransaccion } from '../../lib/movimientos'
 import { flujoSubcuenta } from './SubmovimientosVinculados'
 
 function Fila({ icono, claseIcono, titulo, meta, monto, acciones }) {
@@ -62,11 +62,11 @@ export function MovimientoFila({ movimiento: m, onEliminar }) {
 
 export function SubmovimientoFila({ movimiento: m, onEliminar }) {
   const esGasto = m.tipo === 'GASTO'
-  const icono = esGasto ? 'menos' : m.tipo === 'TRANSFERENCIA' ? 'transferencia' : 'mas'
+  const { icono, clase } = estiloPorTipoSubcuenta(m.tipo)
   return (
     <Fila
       icono={icono}
-      claseIcono={esGasto ? 'expense' : ''}
+      claseIcono={clase}
       titulo={m.descripcion || etiquetaSubcuenta(m.tipo)}
       meta={[
         m.descripcion && etiquetaSubcuenta(m.tipo),

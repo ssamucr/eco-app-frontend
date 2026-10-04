@@ -7,9 +7,12 @@ export default function ConfirmDialog({
   titulo,
   mensaje,
   etiquetaConfirmar = 'Eliminar',
+  etiquetaAlterna,
+  alternaSiempre = false,
   ocupado = false,
   error,
   onConfirmar,
+  onConfirmarAlterna,
   onCancelar,
 }) {
   const dialogo = useRef(null)
@@ -46,6 +49,11 @@ export default function ConfirmDialog({
         <button type="button" className="btn" onClick={onCancelar} disabled={ocupado} autoFocus>
           Cancelar
         </button>
+        {(error || alternaSiempre) && onConfirmarAlterna && (
+          <button type="button" className="btn btn--danger" onClick={onConfirmarAlterna} disabled={ocupado}>
+            {ocupado ? 'Procesando…' : etiquetaAlterna}
+          </button>
+        )}
         <button type="button" className="btn btn--danger" onClick={onConfirmar} disabled={ocupado}>
           {ocupado ? (etiquetaConfirmar === 'Eliminar' ? 'Eliminando…' : 'Procesando…') : etiquetaConfirmar}
         </button>

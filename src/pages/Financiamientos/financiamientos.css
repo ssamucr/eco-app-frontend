@@ -192,24 +192,6 @@
   color: var(--text);
 }
 
-.switch {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 12px;
-  font-size: 13px;
-  color: var(--text-nav);
-  cursor: pointer;
-}
-
-.switch input {
-  width: 16px;
-  height: 16px;
-  margin-top: 2px;
-  accent-color: var(--accent);
-  flex-shrink: 0;
-}
-
 /* ---------- estado de pago de una cuota ---------- */
 .paybox {
   display: flex;

@@ -79,7 +79,7 @@ export default function SubcuentaForm({ cuenta, subcuenta, onGuardar, onEliminar
           onChange={alCambiar('nombre', setNombre)}
           placeholder="Ej. Fondo de emergencia"
           error={errores.nombre}
-          maxLength={100}
+          maxLength={30}
           autoFocus={!editando}
         />
       </Campo>
@@ -113,7 +113,7 @@ export default function SubcuentaForm({ cuenta, subcuenta, onGuardar, onEliminar
           valor={descripcion}
           onChange={setDescripcion}
           placeholder="Ej. Para imprevistos médicos o de trabajo"
-          maxLength={200}
+          maxLength={50}
         />
       </Campo>
 

@@ -8,9 +8,9 @@ export default function SubcuentasFilas({ cuenta, onEliminar }) {
   const { subcuentas, sin_asignar: sinAsignar } = cuenta
   return (
     <>
-      {subcuentas.map((sub, i) => (
+      {subcuentas.map((sub) => (
         <div key={sub.id_subcuenta} className="sub-row">
-          <span className="dot" style={{ background: colorSubcuenta(i) }} />
+          <span className="dot" style={{ background: colorSubcuenta(sub.indice_color) }} />
           <div className="sub-row__name">
             <p>{sub.nombre}</p>
           </div>

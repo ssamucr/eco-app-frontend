@@ -1,4 +1,4 @@
-import { eliminarCuenta, eliminarSubcuenta } from '../../api/cuentas'
+import { eliminarCuenta, eliminarCuentaConMovimientos, eliminarSubcuenta } from '../../api/cuentas'
 import { dinero } from '../../lib/format'
 
 export function eliminarCuentaConfig(cuenta, onExito) {
@@ -6,6 +6,8 @@ export function eliminarCuentaConfig(cuenta, onExito) {
     titulo: `Eliminar la cuenta «${cuenta.nombre}»`,
     mensaje: 'Esta acción no se puede deshacer.',
     ejecutar: () => eliminarCuenta(cuenta.id_cuenta),
+    ejecutarAlterna: () => eliminarCuentaConMovimientos(cuenta.id_cuenta),
+    etiquetaAlterna: 'Eliminar cuenta y movimientos',
     onExito,
   }
 }

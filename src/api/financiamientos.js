@@ -14,4 +14,5 @@ export const crearCuota = (cuota) => apiPost('/cuotas-financiamiento', cuota)
 export const actualizarCuota = (id, cuota) => apiPut(`/cuotas-financiamiento/${id}`, cuota)
 export const eliminarCuota = (id) => apiDelete(`/cuotas-financiamiento/${id}`)
 export const pagarCuota = (id, pago) => apiPost(`/cuotas-financiamiento/${id}/pagar`, pago)
-export const deshacerPagoCuota = (id) => apiPost(`/cuotas-financiamiento/${id}/deshacer-pago`, {})
+export const deshacerPagoCuota = (id, eliminarPago = false) =>
+  apiPost(`/cuotas-financiamiento/${id}/deshacer-pago${eliminarPago ? '?eliminar_pago=true' : ''}`, {})

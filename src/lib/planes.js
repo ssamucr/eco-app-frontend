@@ -1,6 +1,6 @@
 import { dinero } from './format'
 
-// "Netflix (MantCorteDent)" si el destino es una subcuenta; si no, solo la cuenta.
+// "Netflix (Cuenta principal)" si el destino es una subcuenta; si no, solo la cuenta.
 export const textoDestino = (destino) =>
   destino.subcuenta ? `${destino.subcuenta} (${destino.cuenta})` : destino.cuenta
 

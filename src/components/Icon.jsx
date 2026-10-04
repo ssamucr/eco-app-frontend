@@ -65,6 +65,21 @@ const ICONOS = {
       <circle cx="16.5" cy="13.5" r="1.3" fill="currentColor" stroke="none" />
     </>
   ),
+  ahorro: (
+    <>
+      <path d="M19 10.2c-.6-2.6-3.1-4.2-6.3-4.2H10C6.7 6 4 8.4 4 11.7c0 1.9.9 3.5 2.3 4.5V19h3v-1.5h5V19h3v-3c.8-.6 1.4-1.4 1.7-2.3H22v-3.5h-1.2" />
+      <path d="M16.5 6.4 17.5 4l1.8 1.8" />
+      <path d="M10 3.2h2.6" />
+      <circle cx="15.7" cy="10.4" r=".7" fill="currentColor" stroke="none" />
+    </>
+  ),
+  efectivo: (
+    <>
+      <rect x="2.5" y="6" width="19" height="12" rx="2" />
+      <circle cx="12" cy="12" r="2.8" />
+      <path d="M6 9.5v.01M18 14.5v.01" />
+    </>
+  ),
   menos: (
     <>
       <circle cx="12" cy="12" r="9" />

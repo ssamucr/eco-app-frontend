@@ -16,16 +16,31 @@ export function porcentaje(valor) {
   return `${Math.round(valor)}%`
 }
 
+// Limpia lo que se escribe en un input de dinero o porcentaje: la coma siempre se entiende como
+// separador decimal (se convierte a punto), se descarta todo lo que no sea un dígito o un punto, y
+// se limita la cantidad de dígitos enteros y decimales para que siempre entre en su columna de la BD.
+export function sanitizarEntradaMonto(texto, digitosEnteros = 16) {
+  const limpio = String(texto ?? '')
+    .replace(/,/g, '.')
+    .replace(/[^0-9.]/g, '')
+  const puntos = limpio.includes('.') ? limpio.indexOf('.') : limpio.length
+  const entero = limpio.slice(0, puntos).slice(0, digitosEnteros)
+  const decimal = limpio.slice(puntos + 1).replace(/\./g, '').slice(0, 2)
+  return limpio.includes('.') ? `${entero}.${decimal}` : entero
+}
+
 // Texto de un input de dinero -> número. Devuelve null si está vacío y NaN si no es un número válido.
 export function parseMonto(texto) {
-  const limpio = String(texto ?? '').replace(/[$,\s]/g, '')
+  const limpio = String(texto ?? '')
+    .replace(/[$\s]/g, '')
+    .replace(/,/g, '.')
   if (limpio === '') return null
   return /^-?(\d+\.?\d*|\.\d+)$/.test(limpio) ? Number(limpio) : NaN
 }
 
-// Número -> texto para un input de dinero: 3000 -> "3,000.00"
+// Número -> texto para un input de dinero: 3000 -> "3000.00" (sin separador de miles, para poder editarlo).
 export function montoParaInput(valor) {
-  return valor == null ? '' : numero.format(valor)
+  return valor == null ? '' : Number(valor).toFixed(2)
 }
 
 export const plural = (cantidad, singular, plurales) => `${cantidad} ${cantidad === 1 ? singular : plurales}`

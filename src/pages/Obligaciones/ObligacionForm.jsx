@@ -13,12 +13,11 @@ import {
 } from '../../components/forms'
 import { TARJETA } from '../../lib/cuentas'
 import { dinero, fechaCorta, hoyIso, montoParaInput, parseMonto } from '../../lib/format'
-import { etiquetaTransaccion } from '../../lib/movimientos'
+import { opcionTransaccion } from '../../lib/movimientos'
 import { TIPOS_OBLIGACION } from '../../lib/obligaciones'
 import { flujoSubcuenta } from '../Movimientos/SubmovimientosVinculados'
 
 const texto = (id) => (id == null ? '' : String(id))
-const etiquetaTrx = (t) => `${t.descripcion || etiquetaTransaccion(t.tipo)} · ${fechaCorta(t.fecha)}`
 const etiquetaMov = (m) => `${flujoSubcuenta(m.tipo, m.subcuenta_origen, m.subcuenta_destino)} · ${fechaCorta(m.fecha)}`
 
 // Las listas de "recientes" pueden no traer el vínculo actual de una obligación: se agrega para no perderlo al editar.
@@ -182,7 +181,7 @@ export default function ObligacionForm({ opciones, obligacion, personaInicial, o
               valor={trxOrigen}
               onChange={setTrxOrigen}
               vacio="Ninguna"
-              opciones={transacciones.map((t) => ({ valor: String(t.id_transaccion), etiqueta: etiquetaTrx(t) }))}
+              opciones={transacciones.map(opcionTransaccion)}
             />
           </Campo>
           <Campo id="mov-origen" etiqueta="Movimiento de subcuenta">

@@ -41,6 +41,7 @@ export default function SubmovimientosVinculados({
   onAgregar,
   onQuitarExistente,
   onQuitarAgregado,
+  ajustes = {},
 }) {
   const [abierto, setAbierto] = useState(false)
   const [valor, setValor] = useState(() => submovimientoInicial(opciones))
@@ -58,7 +59,7 @@ export default function SubmovimientosVinculados({
   }
 
   const agregar = () => {
-    const nuevos = validarSubmovimiento(valor, opciones)
+    const nuevos = validarSubmovimiento(valor, opciones, ajustes[valor.cuenta] ?? 0)
     setErrores(nuevos)
     if (Object.keys(nuevos).length) return
     const nombres = describirSubmovimiento(valor, opciones)
@@ -114,7 +115,14 @@ export default function SubmovimientosVinculados({
 
       {abierto ? (
         <div className="staged-form" onKeyDown={alPulsar}>
-          <SubmovimientoCampos idBase="vin" opciones={opciones} valor={valor} alCambiar={alCambiar} errores={errores} />
+          <SubmovimientoCampos
+            idBase="vin"
+            opciones={opciones}
+            valor={valor}
+            alCambiar={alCambiar}
+            errores={errores}
+            ajustes={ajustes}
+          />
           <div className="staged-form__actions">
             <button type="button" className="btn" onClick={cerrar}>
               Cancelar

@@ -1,13 +1,13 @@
 import { Link } from 'react-router-dom'
 import Icon from '../../components/Icon'
 import UsoTarjeta from '../../components/UsoTarjeta'
-import { COLOR_SIN_ASIGNAR, TARJETA, colorSubcuenta, etiquetaTipo } from '../../lib/cuentas'
+import { COLOR_SIN_ASIGNAR, TARJETA, colorSubcuenta, etiquetaTipo, iconoTipo } from '../../lib/cuentas'
 import { dinero } from '../../lib/format'
 import SubcuentasFilas from './SubcuentasFilas'
 
 function BarraSubcuentas({ cuenta }) {
   const segmentos = cuenta.subcuentas
-    .map((sub, i) => ({ clave: sub.id_subcuenta, pct: sub.porcentaje, color: colorSubcuenta(i) }))
+    .map((sub) => ({ clave: sub.id_subcuenta, pct: sub.porcentaje, color: colorSubcuenta(sub.indice_color) }))
     .concat({ clave: 'libre', pct: cuenta.porcentaje_sin_asignar, color: COLOR_SIN_ASIGNAR })
     .filter((s) => s.pct > 0)
   return (
@@ -34,7 +34,7 @@ export default function CuentaItem({ cuenta, onEliminarCuenta, onEliminarSubcuen
       <div className="account__head">
         <div className="account__id">
           <div className={`tile ${esTarjeta ? 'tile--neutral' : ''}`}>
-            <Icon nombre={esTarjeta ? 'tarjeta' : 'cartera'} size={19} strokeWidth={1.6} />
+            <Icon nombre={iconoTipo(cuenta.tipo)} size={22} strokeWidth={1.5} />
           </div>
           <div style={{ minWidth: 0 }}>
             <p className="account__name">{cuenta.nombre}</p>

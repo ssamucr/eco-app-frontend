@@ -28,11 +28,19 @@ export function eliminarCuotaConfig(cuota, onExito) {
 }
 
 export function deshacerPagoConfig(cuota, onExito) {
+  const conPago = Boolean(cuota.id_transaccion_pago)
   return {
     titulo: `Deshacer el pago de la cuota ${cuota.numero_cuota}`,
-    mensaje: 'La cuota vuelve a quedar pendiente. La transacción con la que la pagaste no cambia.',
-    etiquetaConfirmar: 'Deshacer pago',
+    mensaje: conPago
+      ? 'La cuota vuelve a quedar pendiente. Puedes conservar la transacción con la que la pagaste o eliminarla también (devuelve el dinero a la cuenta y a la subcuenta).'
+      : 'La cuota vuelve a quedar pendiente.',
+    etiquetaConfirmar: conPago ? 'Solo deshacer' : 'Deshacer pago',
     ejecutar: () => deshacerPagoCuota(cuota.id_cuota_financiamiento),
+    ...(conPago && {
+      alternaSiempre: true,
+      etiquetaAlterna: 'Deshacer y eliminar el pago',
+      ejecutarAlterna: () => deshacerPagoCuota(cuota.id_cuota_financiamiento, true),
+    }),
     onExito,
   }
 }

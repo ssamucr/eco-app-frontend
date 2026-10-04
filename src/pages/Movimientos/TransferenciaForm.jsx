@@ -13,11 +13,13 @@ import {
 } from '../../components/forms'
 import { TARJETA } from '../../lib/cuentas'
 import { hoyIso, montoParaInput, parseMonto } from '../../lib/format'
-import { TIPOS_TRANSACCION } from '../../lib/movimientos'
+import { TIPOS_TRANSACCION, transaccionTieneDestino, transaccionTieneOrigen } from '../../lib/movimientos'
+import { ajustesSinAsignar, efectoSinAsignar } from './submovimiento'
+import ObligacionDelGasto, { OBLIGACION_VACIA } from './ObligacionDelGasto'
 import SubmovimientosVinculados from './SubmovimientosVinculados'
 
-const usaOrigen = (tipo) => tipo !== 'INGRESO'
-const usaDestino = (tipo) => tipo !== 'GASTO'
+const usaOrigen = transaccionTieneOrigen
+const usaDestino = transaccionTieneDestino
 
 const ETIQUETA_ENVIAR = {
   TRANSFERENCIA: 'Crear transferencia',
@@ -40,9 +42,18 @@ export default function TransferenciaForm({ opciones, movimiento, tipoInicial, o
   const [referencia, setReferencia] = useState(movimiento?.referencia ?? '')
   const [quitados, setQuitados] = useState([])
   const [agregados, setAgregados] = useState([])
+  const [obligacion, setObligacion] = useState(OBLIGACION_VACIA)
   const [errores, setErrores] = useState({})
   const [errorGeneral, setErrorGeneral] = useState(null)
   const [guardando, setGuardando] = useState(false)
+
+  // Cuánto cambia "sin asignar" de cada cuenta por esta transacción, comparado con lo que ya
+  // reflejan los datos cargados (el movimiento original, si se está editando uno existente).
+  const efectoActual = efectoSinAsignar(tipo, origen, destino, parseMonto(monto) || 0)
+  const efectoOriginal = editando
+    ? efectoSinAsignar(movimiento.tipo, texto(movimiento.id_cuenta_origen), texto(movimiento.id_cuenta_destino), Number(movimiento.monto))
+    : {}
+  const ajustes = ajustesSinAsignar(efectoActual, efectoOriginal)
 
   const cuentaPorId = (id) => opciones.cuentas.find((c) => String(c.id_cuenta) === id)
   const opcionesCuenta = (cuentas) =>
@@ -66,6 +77,13 @@ export default function TransferenciaForm({ opciones, movimiento, tipoInicial, o
     }
   }
 
+  // Un gasto con la tarjeta puede dejar una obligación (alguien debe esa compra); un gasto de una cuenta ya salió del dinero.
+  const ofreceObligacion = !editando && tipo === 'GASTO' && cuentaPorId(origen)?.tipo === TARJETA
+  const cambiarObligacion = (parche) => {
+    setObligacion((previa) => ({ ...previa, ...parche }))
+    setErrores((previos) => ({ ...previos, oblPersona: undefined, oblCuenta: undefined, oblMonto: undefined }))
+  }
+
   const validar = () => {
     const nuevos = {}
     const importe = parseMonto(monto)
@@ -74,6 +92,12 @@ export default function TransferenciaForm({ opciones, movimiento, tipoInicial, o
     if (tipo === 'TRANSFERENCIA' && origen && origen === destino) nuevos.destino = 'Debe ser distinta a la cuenta origen.'
     if (importe == null || Number.isNaN(importe) || importe <= 0) nuevos.monto = 'Ingresa un monto mayor que 0.'
     if (!fecha) nuevos.fecha = 'Elige una fecha.'
+    if (ofreceObligacion && obligacion.activa) {
+      const importeObl = parseMonto(obligacion.monto)
+      if (obligacion.tipo !== 'REPOSICION' && !obligacion.persona) nuevos.oblPersona = 'Elige la persona.'
+      if (!obligacion.cuenta) nuevos.oblCuenta = 'Elige la cuenta donde se salda.'
+      if (Number.isNaN(importeObl) || (importeObl != null && importeObl <= 0)) nuevos.oblMonto = 'Ingresa un monto mayor que 0.'
+    }
     return nuevos
   }
 
@@ -100,6 +124,16 @@ export default function TransferenciaForm({ opciones, movimiento, tipoInicial, o
       cuerpo.quitar_movimientos_subcuenta = quitados
     } else {
       cuerpo.movimientos_subcuenta = nuevosMovimientos
+      if (ofreceObligacion && obligacion.activa) {
+        cuerpo.obligacion = {
+          tipo: obligacion.tipo,
+          id_persona: obligacion.persona ? Number(obligacion.persona) : null,
+          descripcion: obligacion.concepto.trim() || null,
+          monto: parseMonto(obligacion.monto),
+          id_cuenta_destino_resolucion: Number(obligacion.cuenta),
+          id_subcuenta_destino_resolucion: obligacion.subcuenta ? Number(obligacion.subcuenta) : null,
+        }
+      }
     }
 
     setGuardando(true)
@@ -186,6 +220,20 @@ export default function TransferenciaForm({ opciones, movimiento, tipoInicial, o
         />
       </Campo>
 
+      {ofreceObligacion && (
+        <>
+          <div className="form-divider" />
+          <ObligacionDelGasto
+            opciones={opciones}
+            valor={obligacion}
+            alCambiar={cambiarObligacion}
+            errores={errores}
+            montoGasto={parseMonto(monto)}
+            descripcionGasto={descripcion.trim()}
+          />
+        </>
+      )}
+
       <div className="form-divider" />
 
       <SubmovimientosVinculados
@@ -195,6 +243,7 @@ export default function TransferenciaForm({ opciones, movimiento, tipoInicial, o
         onAgregar={(nuevo) => setAgregados([...agregados, nuevo])}
         onQuitarExistente={(id) => setQuitados([...quitados, id])}
         onQuitarAgregado={(indice) => setAgregados(agregados.filter((_, i) => i !== indice))}
+        ajustes={ajustes}
       />
 
       <ErrorFormulario mensaje={errorGeneral} />

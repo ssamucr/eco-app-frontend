@@ -10,14 +10,14 @@ import {
 import { buscarCuenta, disponibleDeOrigen } from './submovimiento'
 
 // Campos de un movimiento de subcuenta. `valor` son los textos del formulario; `alCambiar(parche)` los actualiza.
-export default function SubmovimientoCampos({ idBase, opciones, valor, alCambiar, errores }) {
+export default function SubmovimientoCampos({ idBase, opciones, valor, alCambiar, errores, ajustes = {} }) {
   const conSubcuentas = cuentasConSubcuentas(opciones)
   const cuenta = buscarCuenta(opciones, valor.cuenta)
   const subcuentas = (cuenta?.subcuentas ?? []).map((s) => ({
     valor: String(s.id_subcuenta),
     etiqueta: `${s.nombre} (${dinero(s.saldo)})`,
   }))
-  const disponible = disponibleDeOrigen(valor, cuenta)
+  const disponible = disponibleDeOrigen(valor, cuenta, ajustes[valor.cuenta] ?? 0)
   const desdeSinAsignar = !subcuentaTieneOrigen(valor.tipo)
 
   // Al cambiar de tipo o de cuenta las subcuentas elegidas dejan de aplicar.
@@ -61,7 +61,7 @@ export default function SubmovimientoCampos({ idBase, opciones, valor, alCambiar
             valor="sin"
             onChange={() => {}}
             disabled
-            opciones={[{ valor: 'sin', etiqueta: `Sin asignar (${dinero(cuenta?.sin_asignar ?? 0)})` }]}
+            opciones={[{ valor: 'sin', etiqueta: `Sin asignar (${dinero(Math.max(disponible ?? 0, 0))})` }]}
           />
         ) : (
           <Selector

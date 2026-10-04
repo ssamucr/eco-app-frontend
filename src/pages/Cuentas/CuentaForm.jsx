@@ -90,6 +90,7 @@ function SubcuentasIniciales({ subcuentas, saldo, onAgregar, onQuitar }) {
               onChange={(nombre) => setBorrador({ ...borrador, nombre })}
               placeholder="Ej. Fondo de emergencia"
               error={errores.nombre}
+              maxLength={30}
               autoFocus
             />
           </Campo>
@@ -218,13 +219,13 @@ export default function CuentaForm({ cuenta, onGuardar, onEliminar, onEliminarSu
           onChange={alCambiar('nombre', setNombre)}
           placeholder="Ej. Cuenta de ahorros principal"
           error={errores.nombre}
-          maxLength={100}
+          maxLength={30}
           autoFocus={!editando}
         />
       </Campo>
 
       <Campo id="banco" etiqueta="Banco" opcional>
-        <InputTexto id="banco" valor={entidad} onChange={setEntidad} placeholder="Ej. Banco General" maxLength={100} />
+        <InputTexto id="banco" valor={entidad} onChange={setEntidad} placeholder="Ej. Banco General" maxLength={30} />
       </Campo>
 
       <Segmentado etiqueta="Tipo de cuenta" opciones={TIPOS_CUENTA} valor={tipo} onChange={setTipo} />

@@ -18,11 +18,11 @@ export function useConfirmarEliminacion() {
     setError(null)
   }
 
-  const confirmar = async () => {
+  const ejecutar = async (accion) => {
     setOcupado(true)
     setError(null)
     try {
-      await pendiente.ejecutar()
+      await accion()
       const alExito = pendiente.onExito
       setPendiente(null)
       alExito?.()
@@ -33,6 +33,9 @@ export function useConfirmarEliminacion() {
     }
   }
 
+  const confirmar = () => ejecutar(pendiente.ejecutar)
+  const confirmarAlterna = () => ejecutar(pendiente.ejecutarAlterna)
+
   return {
     pedir,
     dialogoProps: {
@@ -40,9 +43,12 @@ export function useConfirmarEliminacion() {
       titulo: pendiente?.titulo ?? '',
       mensaje: pendiente?.mensaje ?? '',
       etiquetaConfirmar: pendiente?.etiquetaConfirmar,
+      etiquetaAlterna: pendiente?.etiquetaAlterna,
+      alternaSiempre: Boolean(pendiente?.alternaSiempre),
       ocupado,
       error,
       onConfirmar: confirmar,
+      onConfirmarAlterna: pendiente?.ejecutarAlterna ? confirmarAlterna : undefined,
       onCancelar: cancelar,
     },
   }
