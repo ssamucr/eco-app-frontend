@@ -9,4 +9,6 @@ export const actualizarObligacion = (id, obligacion) => apiPut(`/obligaciones/${
 export const eliminarObligacion = (id) => apiDelete(`/obligaciones/${id}`)
 
 export const crearLiquidacion = (liquidacion) => apiPost('/liquidaciones', liquidacion)
-export const eliminarLiquidacion = (id) => apiDelete(`/liquidaciones/${id}`)
+export const liquidarLote = (lote) => apiPost('/liquidaciones/lote', lote)
+export const eliminarLiquidacion = (id, eliminarMovimientos = false) =>
+  apiDelete(`/liquidaciones/${id}${eliminarMovimientos ? '?eliminar_movimientos=true' : ''}`)

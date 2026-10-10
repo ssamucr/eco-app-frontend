@@ -96,6 +96,7 @@ export default function Obligaciones() {
         recargar()
       }),
     )
+  const hayPendientes = data && (data.te_deben.length || data.debes.length || data.reposiciones.length) > 0
   const sinNada = data && !data.te_deben.length && !data.debes.length && !data.reposiciones.length
 
   return (
@@ -118,10 +119,18 @@ export default function Obligaciones() {
             )}
           </p>
         </div>
-        <Link to="/obligaciones/nueva" className="quickbtn quickbtn--primary">
-          <Icon nombre="agregar" size={15} strokeWidth={1.9} />
-          Nueva obligación
-        </Link>
+        <div className="page-header__actions">
+          {hayPendientes && (
+            <Link to="/obligaciones/liquidar-varias" className="quickbtn">
+              <Icon nombre="check" size={15} strokeWidth={1.9} />
+              Liquidar varias
+            </Link>
+          )}
+          <Link to="/obligaciones/nueva" className="quickbtn quickbtn--primary">
+            <Icon nombre="agregar" size={15} strokeWidth={1.9} />
+            Nueva obligación
+          </Link>
+        </div>
       </div>
 
       <Aviso mensaje={aviso} onCerrar={() => setAviso(null)} />

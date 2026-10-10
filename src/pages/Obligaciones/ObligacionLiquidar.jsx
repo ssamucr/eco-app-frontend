@@ -11,21 +11,36 @@ import {
   InputMonto,
   InputTexto,
   PaginaFormulario,
+  Segmentado,
   Selector,
   TarjetaFormulario,
   VolverA,
 } from '../../components/forms'
 import { useRecurso } from '../../hooks/useRecurso'
+import { TARJETA } from '../../lib/cuentas'
 import { dinero, dineroConSigno, fechaCorta, hoyIso, montoParaInput, parseMonto } from '../../lib/format'
 import { opcionTransaccion } from '../../lib/movimientos'
 import { etiquetaObligacion } from '../../lib/obligaciones'
 import { flujoSubcuenta } from '../Movimientos/SubmovimientosVinculados'
+import OrigenLiquidacion, { esEntrada, resumenMovimientos } from './OrigenLiquidacion'
 import './obligaciones.css'
+
+const MODOS = [
+  { valor: 'generar', etiqueta: 'Generar los movimientos' },
+  { valor: 'vincular', etiqueta: 'Vincular movimientos existentes' },
+]
 
 function Formulario({ obligacion: o, opciones }) {
   const navigate = useNavigate()
+  const entrada = esEntrada(o.tipo)
+  const [modo, setModo] = useState('generar')
   const [fecha, setFecha] = useState(hoyIso())
   const [monto, setMonto] = useState(montoParaInput(o.monto_pendiente))
+  // En una obligación por cobrar el dinero llega a la cuenta donde se salda; en las demás hay que elegir de dónde sale.
+  const [origen, setOrigen] = useState({
+    cuenta: entrada ? String(o.id_cuenta_destino_resolucion) : '',
+    subcuenta: entrada && o.id_subcuenta_destino_resolucion ? String(o.id_subcuenta_destino_resolucion) : '',
+  })
   const [transaccion, setTransaccion] = useState('')
   const [movimiento, setMovimiento] = useState('')
   const [descripcion, setDescripcion] = useState('')
@@ -33,10 +48,25 @@ function Formulario({ obligacion: o, opciones }) {
   const [errorGeneral, setErrorGeneral] = useState(null)
   const [guardando, setGuardando] = useState(false)
 
+  const generar = modo === 'generar'
   const alCambiar = (campo, poner) => (valor) => {
     poner(valor)
     setErrores((previos) => ({ ...previos, [campo]: undefined }))
   }
+  const cambiarOrigen = (parche) => {
+    setOrigen((previo) => ({ ...previo, ...parche }))
+    setErrores((previos) => ({ ...previos, cuenta: undefined }))
+  }
+
+  const destinoRes = opciones.cuentas.find((c) => c.id_cuenta === o.id_cuenta_destino_resolucion)
+  const resumen = generar
+    ? resumenMovimientos({
+        tipo: o.tipo,
+        cuentas: opciones.cuentas,
+        valor: origen,
+        destino: { cuenta: o.cuenta_destino, subcuenta: o.subcuenta_destino, tarjeta: destinoRes?.tipo === TARJETA },
+      })
+    : null
 
   const enviar = async (evento) => {
     evento.preventDefault()
@@ -45,6 +75,7 @@ function Formulario({ obligacion: o, opciones }) {
     if (!fecha) nuevos.fecha = 'Elige una fecha.'
     if (importe == null || Number.isNaN(importe) || importe <= 0) nuevos.monto = 'Ingresa un monto mayor que 0.'
     else if (importe > o.monto_pendiente + 0.001) nuevos.monto = `Solo quedan ${dinero(o.monto_pendiente)} pendientes.`
+    if (generar && !origen.cuenta) nuevos.cuenta = entrada ? 'Elige la cuenta que recibe el dinero.' : 'Elige la cuenta de origen.'
     setErrores(nuevos)
     setErrorGeneral(null)
     if (Object.keys(nuevos).length) return
@@ -54,8 +85,15 @@ function Formulario({ obligacion: o, opciones }) {
         id_obligacion: o.id_obligacion,
         fecha,
         monto: importe,
-        id_transaccion: transaccion ? Number(transaccion) : null,
-        id_movimiento_subcuenta: movimiento ? Number(movimiento) : null,
+        ...(generar
+          ? {
+              id_cuenta_pago: Number(origen.cuenta),
+              id_subcuenta_pago: origen.subcuenta ? Number(origen.subcuenta) : null,
+            }
+          : {
+              id_transaccion: transaccion ? Number(transaccion) : null,
+              id_movimiento_subcuenta: movimiento ? Number(movimiento) : null,
+            }),
         descripcion: descripcion.trim() || null,
       })
       navigate('/obligaciones', {
@@ -78,33 +116,44 @@ function Formulario({ obligacion: o, opciones }) {
         </Campo>
       </div>
 
-      <Campo id="transaccion" etiqueta="Transacción relacionada" opcional ayuda="La transacción con la que se saldó esta obligación.">
-        <Selector
-          id="transaccion"
-          valor={transaccion}
-          onChange={setTransaccion}
-          vacio="Ninguna"
-          opciones={opciones.transacciones_recientes.map(opcionTransaccion)}
-        />
-      </Campo>
+      <Segmentado id="modo-liquidacion" etiqueta="Movimientos que respaldan la liquidación" opciones={MODOS} valor={modo} onChange={setModo} />
 
-      <Campo
-        id="movimiento"
-        etiqueta="Movimiento de subcuenta relacionado"
-        opcional
-        ayuda="El movimiento entre subcuentas con el que se saldó esta obligación, si aplica."
-      >
-        <Selector
-          id="movimiento"
-          valor={movimiento}
-          onChange={setMovimiento}
-          vacio="Ninguno"
-          opciones={opciones.movimientos_subcuenta_recientes.map((m) => ({
-            valor: String(m.id_movimiento_subcuenta),
-            etiqueta: `${flujoSubcuenta(m.tipo, m.subcuenta_origen, m.subcuenta_destino)} · ${fechaCorta(m.fecha)}`,
-          }))}
-        />
-      </Campo>
+      {generar ? (
+        <>
+          <OrigenLiquidacion tipo={o.tipo} cuentas={opciones.cuentas} valor={origen} alCambiar={cambiarOrigen} errores={errores} />
+          {resumen && <p className="field__help">{resumen}</p>}
+        </>
+      ) : (
+        <>
+          <Campo id="transaccion" etiqueta="Transacción relacionada" opcional ayuda="La transacción con la que se saldó esta obligación.">
+            <Selector
+              id="transaccion"
+              valor={transaccion}
+              onChange={setTransaccion}
+              vacio="Ninguna"
+              opciones={opciones.transacciones_recientes.map(opcionTransaccion)}
+            />
+          </Campo>
+
+          <Campo
+            id="movimiento"
+            etiqueta="Movimiento de subcuenta relacionado"
+            opcional
+            ayuda="El movimiento entre subcuentas con el que se saldó esta obligación, si aplica."
+          >
+            <Selector
+              id="movimiento"
+              valor={movimiento}
+              onChange={setMovimiento}
+              vacio="Ninguno"
+              opciones={opciones.movimientos_subcuenta_recientes.map((m) => ({
+                valor: String(m.id_movimiento_subcuenta),
+                etiqueta: `${flujoSubcuenta(m.tipo, m.subcuenta_origen, m.subcuenta_destino)} · ${fechaCorta(m.fecha)}`,
+              }))}
+            />
+          </Campo>
+        </>
+      )}
 
       <Campo id="descripcion" etiqueta="Descripción" opcional>
         <InputTexto

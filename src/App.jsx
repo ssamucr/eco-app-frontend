@@ -27,6 +27,7 @@ import FinanciamientoEditar from './pages/Financiamientos/FinanciamientoEditar'
 import FinanciamientoNuevo from './pages/Financiamientos/FinanciamientoNuevo'
 import Financiamientos from './pages/Financiamientos/Financiamientos'
 import ObligacionEditar from './pages/Obligaciones/ObligacionEditar'
+import LiquidarVarias from './pages/Obligaciones/LiquidarVarias'
 import ObligacionLiquidar from './pages/Obligaciones/ObligacionLiquidar'
 import ObligacionNueva from './pages/Obligaciones/ObligacionNueva'
 import Obligaciones from './pages/Obligaciones/Obligaciones'
@@ -61,6 +62,7 @@ export default function App() {
         <Route path="planes-recurrentes/:idPlan/ejecutar" element={<PlanEjecutar />} />
         <Route path="obligaciones" element={<Obligaciones />} />
         <Route path="obligaciones/nueva" element={<ObligacionNueva />} />
+        <Route path="obligaciones/liquidar-varias" element={<LiquidarVarias />} />
         <Route path="obligaciones/:idObligacion/editar" element={<ObligacionEditar />} />
         <Route path="obligaciones/:idObligacion/liquidar" element={<ObligacionLiquidar />} />
         <Route path="financiamientos" element={<Financiamientos />} />

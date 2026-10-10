@@ -14,10 +14,21 @@ export function eliminarObligacionConfig(obligacion, onExito) {
 }
 
 export function deshacerLiquidacionConfig(liquidacion, onExito) {
+  const conMovimientos = Boolean(liquidacion.id_transaccion || liquidacion.id_movimiento_subcuenta)
   return {
     titulo: 'Deshacer la liquidación',
-    mensaje: `Se elimina la liquidación de ${dinero(liquidacion.monto)} del ${fechaCorta(liquidacion.fecha)} y ese monto vuelve a quedar pendiente.`,
+    mensaje: `Se elimina la liquidación de ${dinero(liquidacion.monto)} del ${fechaCorta(liquidacion.fecha)} y ese monto vuelve a quedar pendiente.${
+      conMovimientos
+        ? ' Puedes conservar los movimientos con los que se respaldó o eliminarlos también (devuelve el dinero a las cuentas y subcuentas).'
+        : ''
+    }`,
+    etiquetaConfirmar: conMovimientos ? 'Solo deshacer' : 'Eliminar',
     ejecutar: () => eliminarLiquidacion(liquidacion.id_liquidacion),
+    ...(conMovimientos && {
+      alternaSiempre: true,
+      etiquetaAlterna: 'Deshacer y eliminar los movimientos',
+      ejecutarAlterna: () => eliminarLiquidacion(liquidacion.id_liquidacion, true),
+    }),
     onExito,
   }
 }
