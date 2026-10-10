@@ -195,3 +195,13 @@
     gap: 10px;
   }
 }
+
+.filtros {
+  align-items: center;
+  gap: 12px;
+}
+
+.filtros__ciclo {
+  width: 240px;
+  max-width: 100%;
+}

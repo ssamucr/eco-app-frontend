@@ -10,6 +10,7 @@ const ENLACES = [
   { to: '/planes-recurrentes', etiqueta: 'Planes recurrentes', icono: 'recurrente' },
   { to: '/obligaciones', etiqueta: 'Obligaciones', icono: 'obligaciones' },
   { to: '/financiamientos', etiqueta: 'Financiamientos', icono: 'tarjeta' },
+  { to: '/ciclos', etiqueta: 'Ciclos', icono: 'calendario' },
 ]
 
 export default function Sidebar() {

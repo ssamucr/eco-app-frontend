@@ -1,0 +1,119 @@
+.cfg {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+}
+
+.cfg + .cfg {
+  margin-top: 12px;
+}
+
+.cfg__main {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.cfg__name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.cfg__meta {
+  margin-top: 3px;
+  font-size: 13px;
+  color: var(--text-faint);
+  overflow-wrap: break-word;
+}
+
+.cfg__actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.daygrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.daygrid__day {
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text-nav);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.daygrid__day:hover {
+  background: var(--hover-row);
+}
+
+.daygrid__day[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+.period {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 12px 8px;
+}
+
+.period + .period {
+  border-top: 1px solid var(--divider);
+}
+
+.period--now {
+  background: var(--tile-income);
+  border-radius: var(--radius-sm);
+}
+
+.period__main {
+  flex: 1;
+  min-width: 160px;
+}
+
+.period__range {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.period__meta {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+.period__edit {
+  flex-basis: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.period__edit .input {
+  width: auto;
+  min-width: 150px;
+}
+
+.period__error {
+  flex-basis: 100%;
+  font-size: 12px;
+  color: var(--negative);
+}

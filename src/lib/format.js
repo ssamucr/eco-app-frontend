@@ -74,6 +74,13 @@ export function mesAnio(mesIso) {
   return `${capitalizar(fecha.toLocaleDateString('es', { month: 'long' }))} ${fecha.getFullYear()}`
 }
 
+// "9 oct – 22 oct 2026" (el año del inicio solo aparece si cambia de año)
+export function rangoFechas(inicioIso, finIso) {
+  const inicio = parseFecha(inicioIso)
+  const fin = parseFecha(finIso)
+  return `${diaMesCorto(inicio, inicio.getFullYear() !== fin.getFullYear())} – ${diaMesCorto(fin, true)}`
+}
+
 // "Hoy" · "Ayer" · "15 sep" · "15 sep 2025"
 export function fechaRelativa(iso, hoyIso) {
   const fecha = parseFecha(iso)

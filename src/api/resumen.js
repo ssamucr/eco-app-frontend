@@ -1,5 +1,6 @@
 import { apiGet } from './client'
 
-export function getResumen(options) {
-  return apiGet('/resumen', options)
+// Sin `idCiclo` devuelve el ciclo actual de la configuración principal.
+export function getResumen(idCiclo, options) {
+  return apiGet(idCiclo ? `/resumen?id_ciclo=${idCiclo}` : '/resumen', options)
 }

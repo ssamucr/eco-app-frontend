@@ -8,6 +8,9 @@ import Movimientos from './pages/Movimientos/Movimientos'
 import MovimientoSubcuentaNueva from './pages/Movimientos/MovimientoSubcuentaNueva'
 import TransferenciaEditar from './pages/Movimientos/TransferenciaEditar'
 import TransferenciaNueva from './pages/Movimientos/TransferenciaNueva'
+import Ciclos from './pages/Ciclos/Ciclos'
+import { CicloConfigEditar, CicloConfigNueva } from './pages/Ciclos/CicloConfigPaginas'
+import Periodos from './pages/Ciclos/Periodos'
 import Categorias from './pages/Categorias/Categorias'
 import CategoriaEditar from './pages/Categorias/CategoriaEditar'
 import CategoriaNueva from './pages/Categorias/CategoriaNueva'
@@ -60,6 +63,10 @@ export default function App() {
         <Route path="planes-recurrentes/:idPlan" element={<PlanDetalle />} />
         <Route path="planes-recurrentes/:idPlan/editar" element={<PlanEditar />} />
         <Route path="planes-recurrentes/:idPlan/ejecutar" element={<PlanEjecutar />} />
+        <Route path="ciclos" element={<Ciclos />} />
+        <Route path="ciclos/nueva" element={<CicloConfigNueva />} />
+        <Route path="ciclos/:idConfig/editar" element={<CicloConfigEditar />} />
+        <Route path="ciclos/:idConfig/periodos" element={<Periodos />} />
         <Route path="obligaciones" element={<Obligaciones />} />
         <Route path="obligaciones/nueva" element={<ObligacionNueva />} />
         <Route path="obligaciones/liquidar-varias" element={<LiquidarVarias />} />

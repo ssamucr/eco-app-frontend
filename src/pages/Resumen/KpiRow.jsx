@@ -11,7 +11,7 @@ function Triangulo({ hacia }) {
 // `invertir`: en la deuda, que baje es lo bueno.
 function Tendencia({ pct, invertir = false }) {
   if (pct == null) {
-    return <div className="kpi__trend kpi__trend--neutral">Sin datos del mes anterior</div>
+    return <div className="kpi__trend kpi__trend--neutral">Sin datos del inicio del ciclo</div>
   }
   const sube = pct > 0
   const bueno = invertir ? !sube : sube
@@ -19,7 +19,7 @@ function Tendencia({ pct, invertir = false }) {
   return (
     <div className={`kpi__trend ${clase}`}>
       {pct !== 0 && <Triangulo hacia={sube ? 'arriba' : 'abajo'} />}
-      <span>{Math.abs(pct).toFixed(1)}% vs. mes pasado</span>
+      <span>{Math.abs(pct).toFixed(1)}% desde el inicio del ciclo</span>
     </div>
   )
 }
@@ -33,24 +33,24 @@ function Kpi({ etiqueta, children }) {
   )
 }
 
-export default function KpiRow({ kpis, obligaciones }) {
+export default function KpiRow({ kpis, obligaciones, cierre = false }) {
   const { ahorro, deuda_tarjetas: deuda, patrimonio_neto: patrimonio } = kpis
   const balance = obligaciones.balance
 
   return (
     <div className="kpi-row">
-      <Kpi etiqueta="Saldo en cuentas de ahorro">
+      <Kpi etiqueta={cierre ? 'Saldo en ahorro al cierre del ciclo' : 'Saldo en cuentas de ahorro'}>
         <p className="kpi__value">{dinero(ahorro.total)}</p>
         <Tendencia pct={ahorro.variacion_pct} />
       </Kpi>
 
-      <Kpi etiqueta="Deuda en tarjetas de crédito">
+      <Kpi etiqueta={cierre ? 'Deuda en tarjetas al cierre' : 'Deuda en tarjetas de crédito'}>
         <p className="kpi__value">{dinero(deuda.total)}</p>
         <Tendencia pct={deuda.variacion_pct} invertir />
         {deuda.total < 0 && <p className="kpi__note">Saldo a favor en tarjetas</p>}
       </Kpi>
 
-      <Kpi etiqueta="Patrimonio neto">
+      <Kpi etiqueta={cierre ? 'Patrimonio neto al cierre' : 'Patrimonio neto'}>
         <p className="kpi__value">{dinero(patrimonio.total)}</p>
         <Tendencia pct={patrimonio.variacion_pct} />
       </Kpi>

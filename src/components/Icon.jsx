@@ -114,6 +114,13 @@ const ICONOS = {
     </>
   ),
   volver: <path d="M15 5l-7 7 7 7" />,
+  siguiente: <path d="M9 5l7 7-7 7" />,
+  calendario: (
+    <>
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2.5" />
+      <path d="M3.5 10h17M8 3v4M16 3v4" />
+    </>
+  ),
   ejecutar: <path d="M6 4l14 8-14 8V4z" />,
   check: <path d="M5 13l4 4L19 7" />,
   reloj: (

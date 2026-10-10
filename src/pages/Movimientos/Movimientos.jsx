@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { getCiclos } from '../../api/ciclos'
 import { TAMANO_PAGINA, getMovimientos, getMovimientosSubcuenta } from '../../api/movimientos'
 import Aviso from '../../components/Aviso'
 import ConfirmDialog from '../../components/ConfirmDialog'
 import ErrorCarga from '../../components/ErrorCarga'
 import Icon from '../../components/Icon'
+import { Selector } from '../../components/forms'
 import { useConfirmarEliminacion } from '../../hooks/useConfirmarEliminacion'
 import { useListaPaginada } from '../../hooks/useListaPaginada'
-import { hoyIso, plural, tituloDia } from '../../lib/format'
+import { useRecurso } from '../../hooks/useRecurso'
+import { hoyIso, plural, rangoFechas, tituloDia } from '../../lib/format'
 import { eliminarMovimientoConfig, eliminarMovimientoSubcuentaConfig } from './eliminaciones'
 import { MovimientoFila, SubmovimientoFila } from './MovimientoFila'
 import './movimientos.css'
@@ -46,14 +49,30 @@ export default function Movimientos() {
   const [aviso, setAviso] = useState(location.state?.aviso ?? null)
   const hoy = hoyIso()
 
+  const idCiclo = params.get('ciclo') ?? ''
+  const ciclos = useRecurso((o) => getCiclos(null, 36, o))
+  const ciclosPasados = (ciclos.data?.ciclos ?? []).filter((c) => c.fecha_inicio <= hoy)
+  const cicloElegido = ciclosPasados.find((c) => String(c.id_ciclo) === idCiclo)
+  const rango = cicloElegido ? { desde: cicloElegido.fecha_inicio, hasta: cicloElegido.fecha_fin } : null
+
   const lista = useListaPaginada(
     (pagina, opciones) =>
-      (vista === 'cuentas' ? getMovimientos : getMovimientosSubcuenta)(pagina, opciones).then((r) => ({
+      (vista === 'cuentas' ? getMovimientos : getMovimientosSubcuenta)(pagina, opciones, rango).then((r) => ({
         items: r.movimientos,
         total: r.total,
       })),
-    [vista],
+    [vista, rango?.desde, rango?.hasta],
   )
+
+  // Cambiar la vista o el ciclo conserva el otro filtro.
+  const cambiarParams = (cambios) => {
+    const nuevos = new URLSearchParams(params)
+    for (const [clave, valor] of Object.entries(cambios)) {
+      if (valor) nuevos.set(clave, valor)
+      else nuevos.delete(clave)
+    }
+    setParams(nuevos)
+  }
 
   // El aviso llega por el estado de navegación: se limpia para que no reaparezca al recargar.
   useEffect(() => {
@@ -76,8 +95,8 @@ export default function Movimientos() {
             {lista.cargando && !lista.total
               ? ' '
               : enSubcuentas
-                ? `${plural(lista.total, 'movimiento de subcuenta registrado', 'movimientos de subcuenta registrados')}`
-                : `${plural(lista.total, 'movimiento registrado', 'movimientos registrados')}`}
+                ? `${plural(lista.total, 'movimiento de subcuenta', 'movimientos de subcuenta')}${rango ? ' en el ciclo' : ' registrados'}`
+                : `${plural(lista.total, 'movimiento', 'movimientos')}${rango ? ' en el ciclo' : ' registrados'}`}
           </p>
         </div>
         <div className="quick-actions">
@@ -107,6 +126,7 @@ export default function Movimientos() {
         </Link>
       </div>
 
+      <div className="page-toolbar page-toolbar--wrap filtros">
       <div className="view-switch" role="radiogroup" aria-label="Qué movimientos ver">
         {VISTAS.map((v) => (
           <button
@@ -115,11 +135,28 @@ export default function Movimientos() {
             role="radio"
             aria-checked={vista === v.valor}
             className={`segmented__option ${vista === v.valor ? 'is-active' : ''}`}
-            onClick={() => setParams(v.valor === 'cuentas' ? {} : { vista: v.valor })}
+            onClick={() => cambiarParams({ vista: v.valor === 'cuentas' ? '' : v.valor })}
           >
             {v.etiqueta}
           </button>
         ))}
+      </div>
+        {ciclosPasados.length > 0 && (
+          <div className="filtros__ciclo">
+            <Selector
+              id="filtro-ciclo"
+              valor={idCiclo}
+              onChange={(id) => cambiarParams({ ciclo: id })}
+              vacio="Todos los movimientos"
+              aria-label="Filtrar por ciclo"
+              opciones={ciclosPasados.map((c) => ({
+                valor: String(c.id_ciclo),
+                etiqueta: rangoFechas(c.fecha_inicio, c.fecha_fin),
+                detalle: [c.config, c.es_actual && 'Ciclo actual'].filter(Boolean).join(' · '),
+              }))}
+            />
+          </div>
+        )}
       </div>
 
       <Aviso mensaje={aviso} onCerrar={() => setAviso(null)} />

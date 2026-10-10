@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import Icon from '../../components/Icon'
 import { useResumen } from '../../hooks/useResumen'
 import { fechaLarga } from '../../lib/format'
@@ -6,6 +6,8 @@ import ActividadReciente from './ActividadReciente'
 import CuentaCard from './CuentaCard'
 import GastosPorCategoria from './GastosPorCategoria'
 import KpiRow from './KpiRow'
+import NavegadorCiclo from './NavegadorCiclo'
+import PeriodoRow from './PeriodoRow'
 import ObligacionesResumen from './ObligacionesResumen'
 import './resumen.css'
 
@@ -63,7 +65,9 @@ function ErrorCard({ error, onReintentar }) {
 }
 
 export default function Resumen() {
-  const { data, error, loading, reintentar } = useResumen()
+  const [params] = useSearchParams()
+  const idCiclo = Number(params.get('ciclo')) || null
+  const { data, error, loading, reintentar } = useResumen(idCiclo)
 
   return (
     <>
@@ -74,7 +78,9 @@ export default function Resumen() {
 
       {data && (
         <>
-          <KpiRow kpis={data.kpis} obligaciones={data.obligaciones} />
+          <NavegadorCiclo ciclo={data.ciclo} />
+          <PeriodoRow periodo={data.periodo} />
+          <KpiRow kpis={data.kpis} obligaciones={data.obligaciones} cierre={!data.ciclo.es_actual && data.ciclo.fecha_fin < data.fecha} />
 
           <div className="resumen-body">
             <div className="column">
@@ -93,7 +99,7 @@ export default function Resumen() {
             </div>
 
             <div className="column">
-              <GastosPorCategoria gastos={data.gastos_por_categoria} />
+              <GastosPorCategoria gastos={data.gastos_por_categoria} ciclo={data.ciclo} />
               <ObligacionesResumen obligaciones={data.obligaciones} />
             </div>
           </div>
