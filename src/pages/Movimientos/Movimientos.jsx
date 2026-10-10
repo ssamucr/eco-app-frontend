@@ -50,6 +50,8 @@ export default function Movimientos() {
   const hoy = hoyIso()
 
   const idCiclo = params.get('ciclo') ?? ''
+  const categoria = params.get('categoria') ?? ''
+  const nombreCategoria = params.get('nombre') ?? ''
   const ciclos = useRecurso((o) => getCiclos(null, 36, o))
   const ciclosPasados = (ciclos.data?.ciclos ?? []).filter((c) => c.fecha_inicio <= hoy)
   const cicloElegido = ciclosPasados.find((c) => String(c.id_ciclo) === idCiclo)
@@ -57,11 +59,14 @@ export default function Movimientos() {
 
   const lista = useListaPaginada(
     (pagina, opciones) =>
-      (vista === 'cuentas' ? getMovimientos : getMovimientosSubcuenta)(pagina, opciones, rango).then((r) => ({
+      (vista === 'cuentas'
+        ? getMovimientos(pagina, opciones, rango, categoria)
+        : getMovimientosSubcuenta(pagina, opciones, rango)
+      ).then((r) => ({
         items: r.movimientos,
         total: r.total,
       })),
-    [vista, rango?.desde, rango?.hasta],
+    [vista, rango?.desde, rango?.hasta, categoria],
   )
 
   // Cambiar la vista o el ciclo conserva el otro filtro.
@@ -141,6 +146,11 @@ export default function Movimientos() {
           </button>
         ))}
       </div>
+        {categoria && vista === 'cuentas' && (
+          <button type="button" className="chip chip--filtro" onClick={() => cambiarParams({ categoria: '', nombre: '' })}>
+            Categoría: {nombreCategoria || categoria} <Icon nombre="cerrar" size={12} strokeWidth={2} />
+          </button>
+        )}
         {ciclosPasados.length > 0 && (
           <div className="filtros__ciclo">
             <Selector

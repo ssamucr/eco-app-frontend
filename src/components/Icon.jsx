@@ -80,6 +80,22 @@ const ICONOS = {
       <path d="M6 9.5v.01M18 14.5v.01" />
     </>
   ),
+  grafica: (
+    <>
+      <path d="M4 20V4" />
+      <path d="M4 20h16" />
+      <rect x="7.5" y="12" width="3" height="5" rx=".6" />
+      <rect x="12.5" y="8" width="3" height="9" rx=".6" />
+      <rect x="17.5" y="5" width="2.6" height="12" rx=".6" />
+    </>
+  ),
+  descargar: (
+    <>
+      <path d="M12 4v11" />
+      <path d="M7.5 11l4.5 4.5 4.5-4.5" />
+      <path d="M4.5 19.5h15" />
+    </>
+  ),
   menos: (
     <>
       <circle cx="12" cy="12" r="9" />

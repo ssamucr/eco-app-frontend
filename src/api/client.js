@@ -39,6 +39,25 @@ export async function apiRequest(metodo, ruta, { cuerpo, signal } = {}) {
   return respuesta.json()
 }
 
+// Descarga un archivo (Excel, PDF...) que genera el servidor.
+export async function apiDescargar(ruta, nombre) {
+  let respuesta
+  try {
+    respuesta = await fetch(`${BASE_URL}${ruta}`)
+  } catch {
+    throw new ApiError(`No se pudo conectar con la API en ${BASE_URL}`)
+  }
+  if (!respuesta.ok) throw new ApiError(await mensajeDeError(respuesta), respuesta.status)
+  const url = URL.createObjectURL(await respuesta.blob())
+  const enlace = document.createElement('a')
+  enlace.href = url
+  enlace.download = nombre
+  document.body.appendChild(enlace)
+  enlace.click()
+  enlace.remove()
+  URL.revokeObjectURL(url)
+}
+
 export const apiGet = (ruta, opciones) => apiRequest('GET', ruta, opciones)
 export const apiPost = (ruta, cuerpo, opciones) => apiRequest('POST', ruta, { cuerpo, ...opciones })
 export const apiPut = (ruta, cuerpo) => apiRequest('PUT', ruta, { cuerpo })

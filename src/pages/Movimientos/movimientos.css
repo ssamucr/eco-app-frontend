@@ -205,3 +205,14 @@
   width: 240px;
   max-width: 100%;
 }
+
+
+/* filtro de categoria activo */
+.chip--filtro {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+}

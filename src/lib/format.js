@@ -74,6 +74,9 @@ export function mesAnio(mesIso) {
   return `${capitalizar(fecha.toLocaleDateString('es', { month: 'long' }))} ${fecha.getFullYear()}`
 }
 
+// "9 oct"
+export const diaMes = (iso) => diaMesCorto(parseFecha(iso))
+
 // "9 oct – 22 oct 2026" (el año del inicio solo aparece si cambia de año)
 export function rangoFechas(inicioIso, finIso) {
   const inicio = parseFecha(inicioIso)

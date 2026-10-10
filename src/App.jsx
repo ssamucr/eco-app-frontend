@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import Layout from './components/Layout'
 import CuentaEditar from './pages/Cuentas/CuentaEditar'
@@ -37,6 +38,9 @@ import Obligaciones from './pages/Obligaciones/Obligaciones'
 import Pendiente from './pages/Pendiente'
 import Resumen from './pages/Resumen/Resumen'
 
+// La analítica trae la librería de gráficas: se descarga solo cuando se entra a esa pantalla.
+const Analitica = lazy(() => import('./pages/Analitica/Analitica'))
+
 export default function App() {
   return (
     <Routes>
@@ -63,6 +67,14 @@ export default function App() {
         <Route path="planes-recurrentes/:idPlan" element={<PlanDetalle />} />
         <Route path="planes-recurrentes/:idPlan/editar" element={<PlanEditar />} />
         <Route path="planes-recurrentes/:idPlan/ejecutar" element={<PlanEjecutar />} />
+        <Route
+          path="analitica"
+          element={
+            <Suspense fallback={<div className="skeleton" style={{ height: 260 }} />}>
+              <Analitica />
+            </Suspense>
+          }
+        />
         <Route path="ciclos" element={<Ciclos />} />
         <Route path="ciclos/nueva" element={<CicloConfigNueva />} />
         <Route path="ciclos/:idConfig/editar" element={<CicloConfigEditar />} />

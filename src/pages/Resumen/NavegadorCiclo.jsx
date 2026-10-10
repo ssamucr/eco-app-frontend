@@ -5,10 +5,12 @@ import { Selector } from '../../components/forms'
 import { useRecurso } from '../../hooks/useRecurso'
 import { plural, rangoFechas } from '../../lib/format'
 
-const enlace = (id) => (id ? `/?ciclo=${id}` : '/')
 
 // Ciclo que muestra el Resumen, con flechas para ir al anterior o al siguiente.
-export default function NavegadorCiclo({ ciclo }) {
+// `enlace(id)` arma la dirección de cada ciclo; por defecto el Resumen.
+const enlaceResumen = (id) => (id ? `/?ciclo=${id}` : '/')
+
+export default function NavegadorCiclo({ ciclo, enlace = enlaceResumen }) {
   const navigate = useNavigate()
   const configs = useRecurso(getConfigsCiclos)
   const activas = (configs.data ?? []).filter((c) => c.activo)
@@ -57,7 +59,7 @@ export default function NavegadorCiclo({ ciclo }) {
 
       <div className="cycle-nav__extra">
         {!ciclo.es_actual && (
-          <Link to="/" className="btn btn--small btn--primary">
+          <Link to={enlace(null)} className="btn btn--small btn--primary">
             Volver al ciclo actual
           </Link>
         )}
