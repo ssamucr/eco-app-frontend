@@ -23,6 +23,16 @@ Abre <http://localhost:5173>. El puerto es fijo porque la API solo acepta petici
 
 Para apuntar a otra dirección de la API, copia `.env.example` como `.env` y cambia `VITE_API_URL`.
 
+## Inicio de sesión y despliegue
+
+En producción la API exige un token de **Supabase Auth**. Para activarlo define `VITE_SUPABASE_URL` y
+`VITE_SUPABASE_PUBLISHABLE_KEY` (la clave *publishable* es pública por diseño; lo que protege tus datos es el
+token, que la API verifica). Sin esas variables, la app no pide inicio de sesión: es el modo de desarrollo local,
+con la API corriendo con `ECO_AUTH_DESACTIVADA=1`.
+
+Se despliega en **Vercel** (`vercel.json` ya redirige todas las rutas a la app). Configura allí las tres variables
+`VITE_*`; `VITE_API_URL` debe ser la dirección pública de la API.
+
 ## Scripts
 
 | Comando           | Qué hace                              |

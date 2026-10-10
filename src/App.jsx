@@ -1,6 +1,9 @@
 import { lazy, Suspense } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import Layout from './components/Layout'
+import { useSesion } from './hooks/useSesion'
+import { AUTH_ACTIVA } from './lib/sesion'
+import Login from './pages/Login/Login'
 import CuentaEditar from './pages/Cuentas/CuentaEditar'
 import CuentaNueva from './pages/Cuentas/CuentaNueva'
 import Cuentas from './pages/Cuentas/Cuentas'
@@ -42,6 +45,9 @@ import Resumen from './pages/Resumen/Resumen'
 const Analitica = lazy(() => import('./pages/Analitica/Analitica'))
 
 export default function App() {
+  const sesion = useSesion()
+  if (AUTH_ACTIVA && !sesion) return <Login />
+
   return (
     <Routes>
       <Route element={<Layout />}>

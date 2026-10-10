@@ -1,0 +1,30 @@
+.login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+.login__tarjeta {
+  width: 100%;
+  max-width: 400px;
+}
+
+.login__marca {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.login__titulo {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+.login__subtitulo {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--text-muted);
+}

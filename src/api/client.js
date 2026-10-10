@@ -1,3 +1,5 @@
+import { AUTH_ACTIVA, cerrarSesion, renovar, tokenVigente } from '../lib/sesion'
+
 const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
 
 export class ApiError extends Error {
@@ -20,10 +22,29 @@ async function mensajeDeError(respuesta) {
   return `La API respondió con error ${respuesta.status}`
 }
 
+// Pide a la API con el token de la sesion. Si responde 401 intenta renovarlo una vez; si tampoco, cierra la sesion
+// (la app vuelve sola a la pantalla de inicio de sesion).
+async function pedir(ruta, opciones = {}) {
+  const enviar = async () => {
+    const encabezados = { ...opciones.headers }
+    if (AUTH_ACTIVA) {
+      const token = await tokenVigente()
+      if (token) encabezados.Authorization = `Bearer ${token}`
+    }
+    return fetch(`${BASE_URL}${ruta}`, { ...opciones, headers: Object.keys(encabezados).length ? encabezados : undefined })
+  }
+  let respuesta = await enviar()
+  if (respuesta.status === 401 && AUTH_ACTIVA) {
+    if (await renovar()) respuesta = await enviar()
+    if (respuesta.status === 401) cerrarSesion()
+  }
+  return respuesta
+}
+
 export async function apiRequest(metodo, ruta, { cuerpo, signal } = {}) {
   let respuesta
   try {
-    respuesta = await fetch(`${BASE_URL}${ruta}`, {
+    respuesta = await pedir(ruta, {
       method: metodo,
       signal,
       headers: cuerpo === undefined ? undefined : { 'Content-Type': 'application/json' },
@@ -43,7 +64,7 @@ export async function apiRequest(metodo, ruta, { cuerpo, signal } = {}) {
 export async function apiDescargar(ruta, nombre) {
   let respuesta
   try {
-    respuesta = await fetch(`${BASE_URL}${ruta}`)
+    respuesta = await pedir(ruta)
   } catch {
     throw new ApiError(`No se pudo conectar con la API en ${BASE_URL}`)
   }

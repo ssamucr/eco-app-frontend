@@ -1,4 +1,6 @@
 import { NavLink } from 'react-router-dom'
+import { useSesion } from '../hooks/useSesion'
+import { AUTH_ACTIVA, cerrarSesion } from '../lib/sesion'
 import Icon from './Icon'
 
 const ENLACES = [
@@ -15,6 +17,7 @@ const ENLACES = [
 ]
 
 export default function Sidebar() {
+  const sesion = useSesion()
   return (
     <aside className="sidebar">
       <div className="sidebar__brand">
@@ -29,6 +32,16 @@ export default function Sidebar() {
           </NavLink>
         ))}
       </nav>
+      {AUTH_ACTIVA && sesion && (
+        <div className="sidebar__sesion">
+          <span className="sidebar__correo" title={sesion.email}>
+            {sesion.email}
+          </span>
+          <button type="button" className="sidebar__salir" onClick={cerrarSesion}>
+            Cerrar sesión
+          </button>
+        </div>
+      )}
     </aside>
   )
 }
