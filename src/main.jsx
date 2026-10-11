@@ -6,6 +6,7 @@ import './styles/tokens.css'
 import './styles/global.css'
 import './styles/shared.css'
 import App from './App'
+import './styles/movil.css' // al final: ajusta los estilos de cada pantalla para celular
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

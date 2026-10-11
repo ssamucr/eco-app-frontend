@@ -174,7 +174,8 @@ export function Selector({ id, valor, onChange, opciones, vacio, ayuda, error, d
 
   useEffect(() => {
     if (!abierto) return undefined
-    if (conBuscador) buscador.current?.focus()
+    // en el celular el teclado taparia la lista: el buscador se enfoca solo si el usuario lo toca
+    if (conBuscador && !window.matchMedia('(max-width: 900px)').matches) buscador.current?.focus()
     const fuera = (evento) => {
       if (!contenedor.current?.contains(evento.target)) setAbierto(false)
     }
