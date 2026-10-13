@@ -7,6 +7,8 @@ y financiamientos en cuotas. Todo se registra y se edita desde la interfaz, y lo
 Hecho con **React** + **Vite** (JavaScript). La API está en
 [eco-app-backend](https://github.com/ssamucr/eco-app-backend); sin ella corriendo, la app no muestra datos.
 
+**Demo:** <https://eco-app-sooty.vercel.app> (requiere iniciar sesión: es una app de uso personal, con acceso restringido).
+
 ## Requisitos
 
 - Node.js 20.19 o superior (o 22.12+)
