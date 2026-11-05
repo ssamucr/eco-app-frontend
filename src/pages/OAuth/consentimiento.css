@@ -1,0 +1,52 @@
+.consent__datos {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.consent__datos > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 14px;
+}
+
+.consent__datos dt {
+  color: var(--text-muted);
+}
+
+.consent__datos dd {
+  margin: 0;
+  font-weight: 600;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.consent__alerta {
+  color: var(--negative);
+}
+
+.consent__permisos {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.consent__permisos strong {
+  color: inherit;
+}
+
+.consent__permisos ul {
+  margin: 6px 0;
+  padding-left: 18px;
+}
+
+.consent__permisos p {
+  margin: 6px 0 0;
+}
+
+.consent__acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}

@@ -4,6 +4,7 @@ import Layout from './components/Layout'
 import { useSesion } from './hooks/useSesion'
 import { AUTH_ACTIVA } from './lib/sesion'
 import Login from './pages/Login/Login'
+import Consentimiento from './pages/OAuth/Consentimiento'
 import CuentaEditar from './pages/Cuentas/CuentaEditar'
 import CuentaNueva from './pages/Cuentas/CuentaNueva'
 import Cuentas from './pages/Cuentas/Cuentas'
@@ -50,6 +51,8 @@ export default function App() {
 
   return (
     <Routes>
+      {/* Pantalla suelta (sin menú): Supabase manda aquí a quien autoriza un conector, por ejemplo Claude. */}
+      <Route path="oauth/consent" element={<Consentimiento />} />
       <Route element={<Layout />}>
         <Route index element={<Resumen />} />
         <Route path="cuentas" element={<Cuentas />} />
